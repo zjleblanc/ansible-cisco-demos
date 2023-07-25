@@ -1,0 +1,46 @@
+---
+- name: Cisco Lifecycle Report
+  hosts: "{{ _hosts | default('ios-sbox') }}"
+  gather_facts: false
+
+  vars:
+    cisco_eox_token: "undef"
+    web_path: /var/www/reports.autodotes.com/networking/demo
+
+  tasks:
+    - name: Load mock EOX data
+      when: cisco_eox_token == 'undef'
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/vars/mock_eox_data{{ macosx_suffix | default('') }}.yml"
+
+    - name: Get lifecycle information from EoX API
+      when:
+        - ansible_net_serialnum is defined
+        - cisco_eox_token != 'undef'
+      register: r_eox_lifecycle
+      ansible.builtin.uri:
+        url: "https://api.cisco.com/supporttools/eox/rest/5/EOXBySerialNumber/1/{{ ansible_net_serialnum }}?responseencoding=json"
+        headers:
+          Authorization: "Bearer {{ cisco_eox_token }}"
+
+    - name: Get mock lifecycle information
+      ansible.builtin.set_fact:
+        r_eox_lifecycle:
+          json: "{{ lookup('template', playbook_dir + '/templates/eox_response.json.j2') }}"
+
+    - name: Publish report
+      delegate_to: "{{ report_server }}"
+      run_once: true
+      become: true
+      block:
+        - name: Create web directory if it does not exist # noqa run-once[task]
+          ansible.builtin.file:
+            path: "{{ web_path }}"
+            state: directory
+            mode: "0755"
+
+        - name: Create HTML report  # noqa run-once[task]
+          ansible.builtin.template:
+            src: "{{ playbook_dir }}/templates/lifecycle.html.j2"
+            dest: "{{ web_path }}/eox_lifecycle.html"
+            mode: "0644"

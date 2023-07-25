@@ -1,0 +1,22 @@
+- name: Label CDP Neighbors
+  hosts: nxos
+  gather_facts: false
+
+  tasks:
+    - name: Gather nxos facts
+      cisco.nxos.nxos_facts:
+        gather_subset: all
+
+    - name: Set NXOS Interface Description
+      when: ansible_network_os == 'nxos'
+      loop: "{{ ansible_facts.net_neighbors | dict2items }}"
+      cisco.nxos.nxos_config:
+        lines:
+          - description Connected to {{ item.value[0].host }} via its {{ item.value[0].port }}
+        parents: interface {{ item.key }}
+        save_when: changed
+
+    - name: Debug mgmt interface descriptions
+      when: ansible_network_os == 'nxos'
+      ansible.builtin.debug:
+        msg: "{{ ansible_net_interfaces['mgmt0'] }}"
