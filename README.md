@@ -22,6 +22,7 @@ Demonstrating Ansible playbooks that can be used to support common network autom
 | --- | --- |
 | Job Template | [Networking // Cisco Compliance](https://controller.autodotes.com/#/templates/job_template/50/details) |
 | Playbook | [cisco_compliance.yml](./demo_compliance.yml) |
+| Blog | [Network Automation: Compliance Report](https://autodotes.com/posts/WaRaDmKGkhrPqoLqLlzs) |
 
 ### Dynamic MS365 ACL
 
@@ -29,8 +30,8 @@ Demonstrating Ansible playbooks that can be used to support common network autom
 | --- | --- |
 | Job Template | [Networking // MS O365 ACLs](https://controller.autodotes.com/#/templates/job_template/51/details) |
 | Playbook | [o365_acls.yml](./demo_o365_acls.yml) |
-| Artifacts | [json-in](./artifacts/o365_acls.json)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[acls-out](./artifacts/o365_acls.txt)
-
+| Artifacts | [json-in](./artifacts/o365_acls.json)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[acls-out](./artifacts/o365_acls.txt) |
+| Blog | [Network Automation: Microsoft Office 365 ACLs](https://autodotes.com/posts/6wrL2lPAK5jE3bNgzG7Z) |
 ### Device Life-Cycle
 
 | | |
