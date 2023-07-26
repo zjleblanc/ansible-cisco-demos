@@ -4,17 +4,17 @@ Demonstrating Ansible playbooks that can be used to support common network autom
 
 ## Use cases
 
-| Name | Description |
-| --- | --- |
-| Compliance | go through cisco iOS devices, execute [show ip ssh] command, generate a report on all the devices are not compliant. modules => 2048.<br>[show vtp status] commands. checking if the IOS devices configured vtp v3 and the domain name is configured.<br>[show vtp password] making sure the password is configured. |
-| Dynamic MS365 ACL | Pull list of MS365 ACLs and generate network config ACLs |
-| Device Life-Cycle | Pull device life-cycle information from EOX API and report |
-| Software and Firmware Updates | Use Ansible to copy a new ios version to a device and perform an update |
-| Route Failover | Do a SQL query to a test SQL server if it's fails. remove the static route from the DR core switches and remove the BGP network command for the 2-production server. and puts back the commands when SQL query live. |
-| Uplinks labeling | do [show cdp neighbors] on switches uplink. |
-| Auditing | Find all interfaces on Vlan 900 with restricted ACL and create a report<br>Find all interfaces with restricted ACL and create a report<br>Run a “show authentication session” command and report on any interface that does not have a status of “Auth” |
-| Zero-day Provisioning | Allowing plant operator to push template to a new switch |
-| Change AP Names | Walk through playbook used to manage aireos devices, including updating the system name |
+| Name | Description | Blog |
+| --- | --- | :---: |
+| Compliance | go through cisco iOS devices, execute [show ip ssh] command, generate a report on all the devices are not compliant. modules => 2048.<br>[show vtp status] commands. checking if the IOS devices configured vtp v3 and the domain name is configured.<br>[show vtp password] making sure the password is configured. | [📝](https://autodotes.com/posts/WaRaDmKGkhrPqoLqLlzs) |
+| Dynamic MS365 ACL | Pull list of MS365 ACLs and generate network config ACLs | [📝](https://autodotes.com/posts/6wrL2lPAK5jE3bNgzG7Z) |
+| Device Life-Cycle | Pull device life-cycle information from EOX API and report | |
+| Software and Firmware Updates | Use Ansible to copy a new ios version to a device and perform an update | |
+| Route Failover | Do a SQL query to a test SQL server if it's fails. remove the static route from the DR core switches and remove the BGP network command for the 2-production server. and puts back the commands when SQL query live. | |
+| Uplinks labeling | do [show cdp neighbors] on switches uplink. | |
+| Auditing | Find all interfaces on Vlan 900 with restricted ACL and create a report<br>Find all interfaces with restricted ACL and create a report<br>Run a “show authentication session” command and report on any interface that does not have a status of “Auth” | |
+| Zero-day Provisioning | Allowing plant operator to push template to a new switch | |
+| Change AP Names | Walk through playbook used to manage aireos devices, including updating the system name | |
 
 ### Compliance
 
