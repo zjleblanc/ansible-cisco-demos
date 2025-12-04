@@ -1,0 +1,34 @@
+ios_discovery_commands:
+- show call-home profile all
+- show license all          
+- show license summary         
+- show license right-to-use    
+- show clock     
+- show version 
+- show module
+- show inventory           
+- show running-config
+- show ip int brief          
+- show ip int br | i up    
+- show int status           
+- show int description
+- show ip arp    
+- show mac address-table count       
+- show mac address-table     
+- show vlan        
+- show cdp neighbors 
+- show spanning            
+- show etherchannel summary           
+- show switch stack-ports summary
+- show int           
+- Show env all  
+- show process cpu     
+- show processes cpu history
+- show switch  
+- show logging 
+- show ip route
+- show ip protocols      
+- sh ip bgp summary   
+- sh ip ospf neighbor   
+- sh ip eigrp neighb      
+- dir

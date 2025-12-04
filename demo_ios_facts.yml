@@ -4,6 +4,9 @@
   gather_facts: false
   connection: network_cli
 
+  vars_files:
+    - vars/ios_discovery_commands.yml
+
   tasks:
     - name: Gather all available facts from Cisco IOS devices
       cisco.ios.ios_facts:
@@ -52,6 +55,14 @@
     - name: Display network resources
       ansible.builtin.debug:
         msg: "{{ ansible_network_resources | default({}) | to_nice_json }}"
+
+    - name: Loop through discovery commands
+      loop: "{{ discovery_commands }}"
+      loop_control:
+        loop_var: command
+      ignore_errors: true
+      cisco.ios.ios_command:
+        commands: "{{ command }}"
 
     - name: Display all gathered facts
       ansible.builtin.debug:
