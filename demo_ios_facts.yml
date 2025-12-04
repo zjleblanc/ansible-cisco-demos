@@ -8,6 +8,14 @@
     - vars/ios_discovery_commands.yml
 
   tasks:
+    - name: backup ios config
+      cisco.ios.ios_config:
+        defaults: true
+        backup: yes
+        backup_options:
+          filename: "running-config-{{ inventory_hostname }}"
+          dir_path: "{{ playbook_dir }}"
+
     - name: Gather all available facts from Cisco IOS devices
       cisco.ios.ios_facts:
         gather_subset: all
@@ -57,6 +65,7 @@
         msg: "{{ ansible_network_resources | default({}) | to_nice_json }}"
 
     - name: Loop through discovery commands
+      when: discovery | default(false) | bool
       loop: "{{ ios_discovery_commands }}"
       loop_control:
         loop_var: command
@@ -78,3 +87,8 @@
         mode: '0644'
       tags: save_facts
       when: save_facts | default(false) | bool
+
+  - name: Diff post-check config against pre-check
+    cisco.ios.ios_config:
+      diff_against: intended
+      intended_config: "{{ lookup('ansible.builtin.file', 'running-config-' + inventory_hostname) }}"
