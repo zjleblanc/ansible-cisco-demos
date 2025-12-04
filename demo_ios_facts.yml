@@ -1,0 +1,108 @@
+---
+- name: Gather Cisco IOS Facts
+  hosts: "{{ _hosts | default(ansible_limit) | default('ios') }}"
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: Gather all available facts from Cisco IOS devices
+      cisco.ios.ios_facts:
+        gather_subset: all
+        gather_network_resources: all
+      register: ios_facts_result
+
+    - name: Display device hostname and model
+      ansible.builtin.debug:
+        msg: |
+          ═══════════════════════════════════════════════════════════════
+          Device: {{ ansible_net_hostname | default('Unknown') }}
+          ═══════════════════════════════════════════════════════════════
+
+    - name: Display system information
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ SYSTEM INFORMATION                                          │
+          ├─────────────────────────────────────────────────────────────┤
+          │ Hostname:       {{ ansible_net_hostname | default('N/A') }}
+          │ Model:          {{ ansible_net_model | default('N/A') }}
+          │ Serial Number:  {{ ansible_net_serialnum | default('N/A') }}
+          │ IOS Version:    {{ ansible_net_version | default('N/A') }}
+          │ IOS Type:       {{ ansible_net_iostype | default('N/A') }}
+          │ Image:          {{ ansible_net_image | default('N/A') }}
+          │ System:         {{ ansible_net_system | default('N/A') }}
+          └─────────────────────────────────────────────────────────────┘
+
+    - name: Display hardware details
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ HARDWARE DETAILS                                            │
+          ├─────────────────────────────────────────────────────────────┤
+          │ Stacked Masters:    {{ ansible_net_stacked_masters | default([]) | join(', ') | default('N/A') }}
+          │ Stacked Serialnums: {{ ansible_net_stacked_serialnums | default([]) | join(', ') | default('N/A') }}
+          │ Filesystems:        {{ ansible_net_filesystems | default([]) | join(', ') | default('N/A') }}
+          │ Filesystems Info:   {{ ansible_net_filesystems_info | default({}) | to_nice_json }}
+          │ Memory Free:        {{ ansible_net_memfree_mb | default('N/A') }} MB
+          │ Memory Total:       {{ ansible_net_memtotal_mb | default('N/A') }} MB
+          └─────────────────────────────────────────────────────────────┘
+
+    - name: Display interface summary
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ INTERFACES                                                  │
+          ├─────────────────────────────────────────────────────────────┤
+          {% for iface in ansible_net_all_ipv4_addresses | default([]) %}
+          │ IPv4: {{ iface }}
+          {% endfor %}
+          {% for iface in ansible_net_all_ipv6_addresses | default([]) %}
+          │ IPv6: {{ iface }}
+          {% endfor %}
+          │ Interface List: {{ ansible_net_interfaces | default({}) | list | join(', ') }}
+          └─────────────────────────────────────────────────────────────┘
+
+    - name: Display neighbors (CDP/LLDP)
+      when: ansible_net_neighbors | default({}) | length > 0
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ NEIGHBORS (CDP/LLDP)                                        │
+          ├─────────────────────────────────────────────────────────────┤
+          {{ ansible_net_neighbors | to_nice_yaml | indent(2) }}
+          └─────────────────────────────────────────────────────────────┘
+
+    - name: Display network resource configurations
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ NETWORK RESOURCES                                           │
+          ├─────────────────────────────────────────────────────────────┤
+          │ Available resource facts gathered:
+          │ {{ ansible_network_resources | default({}) | list | join(', ') | default('None') }}
+          └─────────────────────────────────────────────────────────────┘
+
+    - name: Display full ansible_network_resources
+      ansible.builtin.debug:
+        var: ansible_network_resources
+        verbosity: 1
+
+    - name: Display all gathered facts (verbose)
+      ansible.builtin.debug:
+        msg: |
+          ┌─────────────────────────────────────────────────────────────┐
+          │ ALL FACTS (RAW)                                             │
+          └─────────────────────────────────────────────────────────────┘
+          {{ ios_facts_result.ansible_facts | to_nice_yaml }}
+      tags: raw_facts
+      when: show_raw_facts | default(false) | bool
+
+    - name: Save facts to file
+      delegate_to: localhost
+      ansible.builtin.copy:
+        content: "{{ ios_facts_result.ansible_facts | to_nice_json }}"
+        dest: "facts/{{ inventory_hostname }}_facts.json"
+        mode: '0644'
+      tags: save_facts
+      when: save_facts | default(false) | bool
+
