@@ -88,7 +88,7 @@
       tags: save_facts
       when: save_facts | default(false) | bool
 
-  - name: Diff post-check config against pre-check
-    cisco.ios.ios_config:
-      diff_against: intended
-      intended_config: "{{ lookup('ansible.builtin.file', 'running-config-' + inventory_hostname) }}"
+    - name: Diff post-check config against pre-check
+      cisco.ios.ios_config:
+        diff_against: intended
+        intended_config: "{{ lookup('ansible.builtin.file', 'running-config-' + inventory_hostname) }}"
