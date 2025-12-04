@@ -57,7 +57,7 @@
         msg: "{{ ansible_network_resources | default({}) | to_nice_json }}"
 
     - name: Loop through discovery commands
-      loop: "{{ discovery_commands }}"
+      loop: "{{ ios_discovery_commands }}"
       loop_control:
         loop_var: command
       ignore_errors: true
